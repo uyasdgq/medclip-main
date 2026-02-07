@@ -1,0 +1,44 @@
+version: v2.0.0 (Advanced Synthesis)
+random_seed: 42
+
+data_root: data
+train_dataset: brainmri
+test_datasets: [brainmri]
+
+epoch: 100
+batch_size: 8
+
+print_freq_step: 10
+val_freq_epoch: 1
+
+image_size: 224
+model_name: ViT-L-14
+layers_out: [12,18,24]
+
+anomaly_tasks:
+  SynomalyTask: 0.4      # Stronger version (Sigma 3)
+  CutpasteTask: 0.2      # Reduced to avoid unrealistic edges
+  SourceTask: 0.2        # Deformation (Mass effect)
+  GaussIntensityChangeTask: 0.1 # Texture anomaly
+  IdentityTask: 0.1      # Normal baseline
+
+prompt_maker: coop
+n_learnable_token: 8
+CSC: True
+class_token_positions: [end]
+
+save_root: results/level2_optimization
+
+prompts:
+  normal: [
+    normal brain mri, healthy brain tissue, negative for pathology,
+    unremarkable brain scan, clear ventricular system, asymptomatic brain,
+    normal anatomical structure, no evidence of lesion, intact brain parenchyma
+  ]
+
+  abnormal: [
+    brain lesion, pathological abnormality, evidence of disease,
+    mass effect present, hyperintense signal, intracranial hemorrhage,
+    gliosis and edema, space-occupying lesion, abnormal brain mri,
+    pathological condition, tissue distortion
+  ]

@@ -1,0 +1,61 @@
+version: v2.0.0
+random_seed: 42
+
+data_root: data
+
+train_dataset: chexpert
+test_datasets: [chexpert]
+
+epoch: 150
+batch_size: 8
+
+print_freq_step: 10
+val_freq_epoch: 1
+
+image_size: 224
+model_name: ViT-L-14
+layers_out: [12,18,24]
+
+# CheXpert优化: 胸部X光特点 - 大面积病变、纹理变化、密度异常
+anomaly_tasks:
+  SynomalyTask: 0.30       # 弥漫性病变（肺炎、水肿）
+  CutpasteTask: 0.25       # 局部病灶
+  GaussIntensityChangeTask: 0.25  # 密度变化
+  SourceTask: 0.10         # 形变（心脏扩大）
+  IdentityTask: 0.10       # 正常基线
+
+prompt_maker: coop
+n_learnable_token: 12
+CSC: True
+class_token_positions: [end, middle]
+
+save_root: results/chexpert_optimized
+
+# CheXpert专用提示词 - 胸部X光领域术语
+prompts:
+  normal: [
+    normal chest radiograph,
+    clear lung fields,
+    no pulmonary infiltrate,
+    normal cardiac silhouette,
+    unremarkable chest xray,
+    no focal consolidation,
+    normal mediastinum,
+    clear costophrenic angles,
+    no pleural effusion,
+    normal thoracic findings
+  ]
+
+  abnormal: [
+    pulmonary opacity,
+    lung infiltrate,
+    cardiomegaly,
+    pleural effusion,
+    consolidation,
+    pulmonary edema,
+    pneumonia,
+    atelectasis,
+    lung nodule,
+    mediastinal widening,
+    abnormal chest radiograph
+  ]

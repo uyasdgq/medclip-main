@@ -1,0 +1,48 @@
+version: v2.0.0 (High Resolution)
+random_seed: 42
+
+data_root: data
+train_dataset: brainmri
+test_datasets: [brainmri]
+
+# Optimization: High Resolution for Finer Details
+image_size: 336
+model_name: ViT-L-14-336  # Trying specific high-res model first
+# If this fails, user can revert to ViT-L-14 and let it interpolate
+
+# Optimization: Aligned with optimized_brain.yaml
+epoch: 100
+batch_size: 4 # Reduced batch size to fit larger images in memory
+layers_out: [12,18,24]
+
+print_freq_step: 10
+val_freq_epoch: 1
+
+# Optimization: Stronger & Diverse Anomaly Tasks
+anomaly_tasks:
+  SynomalyTask: 0.4      # Stronger version (Sigma 3)
+  CutpasteTask: 0.2      # Reduced
+  SourceTask: 0.2        # Deformation
+  GaussIntensityChangeTask: 0.1 # Texture
+  IdentityTask: 0.1      # Normal baseline
+
+prompt_maker: coop
+n_learnable_token: 8
+CSC: True
+class_token_positions: [end]
+
+save_root: results/highres_optimization
+
+prompts:
+  normal: [
+    normal brain mri, healthy brain tissue, negative for pathology,
+    unremarkable brain scan, clear ventricular system, asymptomatic brain,
+    normal anatomical structure, no evidence of lesion, intact brain parenchyma
+  ]
+
+  abnormal: [
+    brain lesion, pathological abnormality, evidence of disease,
+    mass effect present, hyperintense signal, intracranial hemorrhage,
+    gliosis and edema, space-occupying lesion, abnormal brain mri,
+    pathological condition, tissue distortion
+  ]

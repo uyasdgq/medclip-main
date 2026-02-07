@@ -1,0 +1,61 @@
+version: v2.2.0
+random_seed: 42
+
+data_root: data
+
+train_dataset: busi
+test_datasets: [busi]
+
+epoch: 150
+batch_size: 8
+
+print_freq_step: 10
+val_freq_epoch: 1
+
+image_size: 224
+model_name: ViT-L-14
+layers_out: [12,18,24]
+
+# BUSI优化v2.2: 基于最佳结果90.42%进一步优化
+# 移除SourceTask避免intersect_fn问题
+anomaly_tasks:
+  CutpasteTask: 0.35
+  SynomalyTask: 0.30
+  GaussIntensityChangeTask: 0.25
+  IdentityTask: 0.10
+
+prompt_maker: coop
+n_learnable_token: 12
+CSC: True
+class_token_positions: [end]
+
+save_root: results
+
+# BUSI专用提示词 - 乳腺超声领域术语
+prompts:
+  normal: [
+    normal breast tissue,
+    healthy breast ultrasound,
+    negative for mass,
+    unremarkable breast parenchyma,
+    clear breast tissue,
+    no focal lesion,
+    normal glandular tissue,
+    homogeneous breast pattern,
+    benign breast appearance,
+    no suspicious findings
+  ]
+
+  abnormal: [
+    breast mass,
+    suspicious lesion,
+    hypoechoic mass,
+    irregular margin,
+    breast tumor,
+    focal abnormality,
+    heterogeneous mass,
+    breast nodule,
+    malignant appearance,
+    spiculated lesion,
+    posterior acoustic shadowing
+  ]
